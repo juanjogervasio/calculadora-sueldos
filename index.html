@@ -350,14 +350,17 @@
       de tu elección para ver los resultados.
     </p>
     <p class="subtitle fuente">
-      Se aplican los descuentos correspondientes por obra social (IOMA) y aportes varios.
-      No se consideran Garantía Salarial Universitaria, adicionales, bonos ni deducciones ocasionales.
+      Se aplican los descuentos correspondientes por obra social (IOMA), D.S.S. y aportes.
+      No se consideran adicionales, bonos ni deducciones ocasionales.
       Datos de fuentes propias correspondientes a recibos de sueldo de la
       Universidad Nacional de La Plata.
     </p>
     <p class="subtitle fuente">      
       Últimos datos vigentes:
       <strong id="fecha-datos">Marzo 2026</strong>.
+    </p>
+    <p class="subtitle fuente">
+      Garantía Salarial Universitaria (feb-25): <strong>$ 308.641,98</strong>.
     </p>
   </header>
 
@@ -425,24 +428,23 @@
     // Últimos básicos cargados (a reemplazar por lectura de CSV).
     // Fuente: basicos.csv, última fila.
     const BASICOS = {
-      "Ayudante de Primera":          217692.16,
-      "Jefe de Trabajos Prácticos":  260580.05,
-      "Profesor Adjunto":            303420.64,
+      "Ayudante de Primera":         221392.92,
+      "Jefe de Trabajos Prácticos":  265009.91,
+      "Profesor Adjunto":            308578.79,
       "Ninguno":                          0,
     };
 
     const OPCIONES = Object.keys(BASICOS);
 
     const DESCUENTOS = 0.2279;
+    const GARANTIA_SALARIAL = 308641.98;
 
     // ── Factor antigüedad ──────────────────────────────────────────────────
     function factorAntiguedad(años) {
       if (años === null || años === undefined || años === "") return null;
       const n = parseInt(años, 10);
       if (isNaN(n) || n < 0 || n > 100) return null;
-      if (n < 1)  return 1;
-      if (n < 2)  return 1.1;   // [1, 2)
-      if (n < 5)  return 1.2;   // [2,  5)
+      if (n < 5)  return 1.2;   // [0,  5)
       if (n < 7)  return 1.3;   // [5,  7)  
       if (n < 10)  return 1.4;  // [7, 10)  
       if (n < 12)  return 1.5;  // [10, 12)
@@ -525,7 +527,8 @@
 
       cargos.forEach((cargo, idx) => {
         const basico   = BASICOS[cargo] ?? 0;
-        const bruto    = basico * factor;
+        let   bruto    = basico * factor;
+        if (bruto > 0 && bruto < GARANTIA_SALARIAL) bruto = GARANTIA_SALARIAL;
         const neto     = bruto * (1 - DESCUENTOS);
         totalNeto     += neto;
 
