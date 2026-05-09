@@ -1,0 +1,52 @@
+name: Actualizar datos y deployar
+
+on:
+  schedule:
+    # Todos los días a las 17:00 UTC-3 (= 20:00 UTC)
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+    # Permite correrlo manualmente desde la pestaña Actions
+
+permissions:
+  contents: write   # necesario para push a gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Clonar el repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Configurar Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      # 3. Instalar dependencias
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+
+      # 4. Generar los CSVs (tu script existente)
+      - name: Generar basicos.csv e indicadores.csv
+        run: |
+          python scripts/fetch_data.py
+
+      # 5. Inyectar datos en el HTML → escribe en dist/index.html
+      - name: Construir index.html
+        run: python scripts/build_html.py
+
+      # 6. Deploy a GitHub Pages
+      # Toma el contenido de dist/ y lo pushea a la rama gh-pages.
+      # Solo se publican los archivos que el navegador necesita;
+      # scripts, datos y fuentes quedan fuera del sitio.
+      - name: Deploy a GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages

@@ -96,16 +96,16 @@
 
     /* ── Footer ─────────────────────────────────────────── */
     footer {
-  	margin-top: 40px;
-  	font-size: .78rem;
-  	color: var(--text-muted);
-  	text-align: center;
-  	opacity: .7;
-	}
+      margin-top: 40px;
+      font-size: .78rem;
+      color: var(--text-muted);
+      text-align: center;
+      opacity: .7;
+    }
 
     footer strong {
-  	color: var(--text);
-	}
+      color: var(--text);
+    }
 
     /* ── Card ──────────────────────────────────────────────── */
     .card {
@@ -276,6 +276,49 @@
 
     #sueldo-neto.pending { color: var(--text-muted); font-size: 1.1rem; font-family: inherit; font-weight: 400; }
 
+    /* ── Unit toggle ───────────────────────────────────────── */
+    #unit-toggle {
+      display: none;
+      gap: 6px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .unit-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+
+    .unit-btn:hover {
+      border-color: var(--gold-dim);
+      color: var(--text);
+    }
+
+    .unit-btn.active {
+      background: rgba(232,184,75,.12);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ── Tipo de cambio nota ───────────────────────────────── */
+    #tc-nota {
+      display: none;
+      margin-top: 8px;
+      font-size: .76rem;
+      color: var(--text-muted);
+    }
+
+    #tc-nota strong { color: var(--text); }
+
     /* ── Breakdown table ───────────────────────────────────── */
     #breakdown {
       margin-top: 24px;
@@ -360,7 +403,7 @@
       <strong id="fecha-datos">Abril 2026</strong>.
     </p>
     <p class="subtitle fuente">
-      Garantía Salarial Universitaria (feb-25): <strong>$ 308.641,98</strong>.
+      Garantía Salarial Universitaria (feb-25): <strong id="garantia-header">$ 308641.98</strong>.
     </p>
   </header>
 
@@ -397,9 +440,19 @@
   <div class="card" id="resultado-card">
     <p class="section-label">Resultado</p>
     <div class="resultado-inner">
-      <div>
-        <p class="resultado-label">Sueldo Neto estimado</p>
+      <div style="width:100%">
+        <p class="resultado-label" id="resultado-label">Sueldo Neto estimado</p>
         <div id="sueldo-neto" class="pending">Completá las opciones</div>
+
+        <!-- Toggle de unidades (aparece tras el primer cálculo) -->
+        <div id="unit-toggle">
+          <button class="unit-btn active" data-unit="ars">ARS $</button>
+          <button class="unit-btn" data-unit="usd">USD u$s</button>
+          <button class="unit-btn" data-unit="hora">$ / hora</button>
+        </div>
+
+        <!-- Nota tipo de cambio -->
+        <p id="tc-nota"></p>
       </div>
     </div>
 
@@ -419,41 +472,50 @@
       </table>
     </div>
   </div>
+
   <footer>
-  Desarrollado por <strong>Juan José Gervasio</strong> · 2026
+    Desarrollado por <strong>Juan José Gervasio</strong> · 2026
   </footer>
 
   <script>
     // ── Datos ──────────────────────────────────────────────────────────────
-    // Últimos básicos cargados (a reemplazar por lectura de CSV).
-    // Fuente: basicos.csv, última fila.
     const BASICOS = {
-      "Ayudante de Primera":         221392.92,
-      "Jefe de Trabajos Prácticos":  265009.91,
-      "Profesor Adjunto":            308578.79,
-      "Ninguno":                          0,
-    };
+      "Profesor Adjunto": 308578.79,
+      "Jefe de Trabajos Prácticos": 265009.91,
+      "Ayudante de Primera": 221392.92,
+      "Ninguno": 0.00
+    } ;
 
     const OPCIONES = Object.keys(BASICOS);
 
-    const DESCUENTOS = 0.2279;
-    const GARANTIA_SALARIAL = 308641.98;
+    const DESCUENTOS          = 0.2279;
+    const GARANTIA_SALARIAL   = 308641.98;
+    const TIPO_DE_CAMBIO      = 1418.34;   // ARS por USD
+    const HORAS_SEMANALES_POR_CARGO = 9;
+    const SEMANAS_POR_MES     = 4;
+
+    // ── Estado global del resultado ────────────────────────────────────────
+    let estado = {
+      totalNeto:      null,
+      cantidadCargos: null,   // cargos reales (no "Ninguno")
+      unidad:         "ars",
+    };
 
     // ── Factor antigüedad ──────────────────────────────────────────────────
     function factorAntiguedad(años) {
       if (años === null || años === undefined || años === "") return null;
       const n = parseInt(años, 10);
       if (isNaN(n) || n < 0 || n > 100) return null;
-      if (n < 5)  return 1.2;   // [0,  5)
-      if (n < 7)  return 1.3;   // [5,  7)  
-      if (n < 10)  return 1.4;  // [7, 10)  
-      if (n < 12)  return 1.5;  // [10, 12)
-      if (n < 15)  return 1.6;  // [12, 15)
-      if (n < 17)  return 1.7;  // [15, 17)
-      if (n < 20)  return 1.8;  // [17, 20)
-      if (n < 22)  return 2.0;  // [20, 22)
-      if (n < 24)  return 2.1;  // [22, 24)
-      return 2.2;               // >= 24
+      if (n < 5)  return 1.2;
+      if (n < 7)  return 1.3;
+      if (n < 10) return 1.4;
+      if (n < 12) return 1.5;
+      if (n < 15) return 1.6;
+      if (n < 17) return 1.7;
+      if (n < 20) return 1.8;
+      if (n < 22) return 2.0;
+      if (n < 24) return 2.1;
+      return 2.2;
     }
 
     // ── Render selects ─────────────────────────────────────────────────────
@@ -477,30 +539,33 @@
     document.querySelectorAll("select").forEach(s => s.addEventListener("change", calcular));
     document.getElementById("antiguedad").addEventListener("input", calcular);
 
+    document.getElementById("unit-toggle").addEventListener("click", e => {
+      const btn = e.target.closest(".unit-btn");
+      if (!btn) return;
+      estado.unidad = btn.dataset.unit;
+      document.querySelectorAll(".unit-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      mostrarResultado();
+    });
+
     // ── Cálculo ────────────────────────────────────────────────────────────
     function calcular() {
       const antiguedadInput = document.getElementById("antiguedad").value;
       const factor = factorAntiguedad(antiguedadInput);
 
-      // Badge antigüedad + error
-      const factorEl  = document.getElementById("factor-valor");
-      const inputEl   = document.getElementById("antiguedad");
-      const errorEl   = document.getElementById("antiguedad-error");
-      const rawVal    = antiguedadInput.trim();
+      const factorEl = document.getElementById("factor-valor");
+      const inputEl  = document.getElementById("antiguedad");
+      const errorEl  = document.getElementById("antiguedad-error");
+      const rawVal   = antiguedadInput.trim();
 
       if (rawVal !== "" && factor === null) {
-        // Valor ingresado pero inválido
         inputEl.classList.add("input-error");
         errorEl.style.display = "block";
         factorEl.textContent = "—";
       } else {
         inputEl.classList.remove("input-error");
         errorEl.style.display = "none";
-        if (factor !== null) {
-          factorEl.textContent = `×${factor.toFixed(2)}`;
-        } else {
-          factorEl.textContent = "—";
-        }
+        factorEl.textContent = factor !== null ? `×${factor.toFixed(2)}` : "—";
       }
 
       const cargos = [];
@@ -508,31 +573,37 @@
         cargos.push(document.getElementById(`cargo-${i}`).value);
       }
 
-      const netoEl     = document.getElementById("sueldo-neto");
-      const breakdown  = document.getElementById("breakdown");
-      const tbody      = document.getElementById("breakdown-body");
+      const netoEl    = document.getElementById("sueldo-neto");
+      const breakdown = document.getElementById("breakdown");
+      const tbody     = document.getElementById("breakdown-body");
+      const toggle    = document.getElementById("unit-toggle");
 
-      // Necesitamos factor válido y al menos un cargo real
       const algunoCargo = cargos.some(c => c !== "Ninguno");
       if (factor === null || !algunoCargo) {
         netoEl.className = "pending";
         netoEl.textContent = "Completá las opciones";
         breakdown.style.display = "none";
+        toggle.style.display = "none";
+        estado.totalNeto = null;
+        estado.cantidadCargos = null;
         return;
       }
 
       // Calcular
       let totalNeto = 0;
+      let cantidadCargos = 0;
       tbody.innerHTML = "";
 
       cargos.forEach((cargo, idx) => {
-        const basico   = BASICOS[cargo] ?? 0;
-        let   bruto    = basico * factor;
+        const basico = BASICOS[cargo] ?? 0;
+        let   bruto  = basico * factor;
         if (bruto > 0 && bruto < GARANTIA_SALARIAL) bruto = GARANTIA_SALARIAL;
-        const neto     = bruto * (1 - DESCUENTOS);
-        totalNeto     += neto;
+        const neto   = bruto * (1 - DESCUENTOS);
+        totalNeto   += neto;
 
-        if (cargo === "Ninguno") return; // no mostrar filas vacías
+        if (cargo === "Ninguno") return;
+
+        cantidadCargos++;
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -554,16 +625,70 @@
       `;
       tbody.appendChild(trTotal);
 
-      // Mostrar resultado
-      netoEl.className = "";
-      netoEl.classList.add("pop");
-      netoEl.textContent = fmt(totalNeto);
-      setTimeout(() => netoEl.classList.remove("pop"), 350);
+      // Guardar en estado y mostrar
+      estado.totalNeto      = totalNeto;
+      estado.cantidadCargos = cantidadCargos;
+
+      toggle.style.display = "flex";
       breakdown.style.display = "block";
+      mostrarResultado();
     }
 
+    // ── Mostrar resultado según unidad activa ──────────────────────────────
+    function mostrarResultado() {
+      const netoEl  = document.getElementById("sueldo-neto");
+      const label   = document.getElementById("resultado-label");
+      const tcNota  = document.getElementById("tc-nota");
+
+      if (estado.totalNeto === null) return;
+
+      netoEl.className = "";
+
+      switch (estado.unidad) {
+        case "ars": {
+          label.textContent = "Sueldo Neto estimado";
+          netoEl.textContent = fmt(estado.totalNeto);
+          tcNota.style.display = "none";
+          break;
+        }
+        case "usd": {
+          const usd = estado.totalNeto / TIPO_DE_CAMBIO;
+          label.textContent = "Sueldo Neto estimado (USD)";
+          netoEl.textContent = fmtUSD(usd);
+          tcNota.style.display = "block";
+          tcNota.innerHTML = `Tipo de cambio utilizado: <strong>$ ${fmtNum(TIPO_DE_CAMBIO)} ARS/USD</strong>`;
+          break;
+        }
+        case "hora": {
+          const horasMes = HORAS_SEMANALES_POR_CARGO * SEMANAS_POR_MES * estado.cantidadCargos;
+          const porHora  = estado.totalNeto / horasMes;
+          label.textContent = "Sueldo Neto estimado (por hora)";
+          netoEl.textContent = fmt(porHora) + " /h";
+          tcNota.style.display = "block";
+          tcNota.innerHTML = `
+            Basado en <strong>${estado.cantidadCargos} cargo${estado.cantidadCargos > 1 ? "s" : ""}</strong>
+            × ${HORAS_SEMANALES_POR_CARGO} h/sem × ${SEMANAS_POR_MES} sem =
+            <strong>${horasMes} h/mes</strong>
+          `;
+          break;
+        }
+      }
+
+      netoEl.classList.add("pop");
+      setTimeout(() => netoEl.classList.remove("pop"), 350);
+    }
+
+    // ── Helpers de formato ─────────────────────────────────────────────────
     function fmt(n) {
       return "$ " + Math.round(n).toLocaleString("es-AR");
+    }
+
+    function fmtUSD(n) {
+      return "u$s " + n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function fmtNum(n) {
+      return n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
   </script>
 </body>
