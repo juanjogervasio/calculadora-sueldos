@@ -3,7 +3,7 @@
 Created on Fri May  8 19:43:36 2026
 
 @author: gerva
-
+UPDATE: Mayo 2025
 Generador de tablas: basicos.csv y indicadores.csv 
 """
 from pathlib import Path
@@ -23,11 +23,11 @@ cargos = ["Profesor Adjunto",
           "Jefe de Trabajos Prácticos",
           "Ayudante de Primera"]
 
-basicos = [308578.79, 
-           265009.91,
-           221392.92]
+basicos = [313207.47, 
+           268985.05,
+           224713.81]
 
-fecha = [dt.date(2026,4,1) for i in range(3)]
+fecha = [dt.date(2026,5,1) for i in range(3)]
 
 basicos = pd.DataFrame(data = {
                     "cargo" : cargos,
@@ -70,6 +70,11 @@ cbt_json = requests.get(url_datosgob + id_cbt + "&start_date=2020-01-01").json()
 cbt_ultimo = cbt_json["data"][-1]
 
 indicadores.loc[2] = ["Canasta Básica", cbt_ultimo[-1], cbt_ultimo[-2]]
+
+
+# RIPTE: extraido de Datos.gob
+id_ripte = "?ids=158.1_REPTE_0_0_5"
+ripte_json = requests.get(url_datosgob + id_ripte + "&start_date=2020-01-01").json() 
 
 # Guardo los resultados en /data/indicadores.csv
 indicadores.to_csv(DATA_DIR / "indicadores.csv", index=False)
