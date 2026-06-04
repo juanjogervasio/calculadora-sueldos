@@ -176,10 +176,13 @@
 
     input[type="number"]::-webkit-inner-spin-button { opacity: .4; }
 
-    .error-msg { font-size: .76rem; color: var(--red); margin-top: 6px; display: none; }
+    .error-msg { font-size: .76rem; 
+		 color: var(--red); 
+		 margin-top: 6px; 
+		 display: none; }
 
     /* ── Antigüedad row ── */
-    .antiguedad-row { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+    .antiguedad-row { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
     .antiguedad-row > div { flex: 1; min-width: 130px; }
     .antiguedad-row label { display: block; font-size: .76rem; color: var(--text-muted); margin-bottom: 6px; }
 
@@ -403,8 +406,11 @@
             <input type="number" id="antiguedad" min="0" max="100" step="1" placeholder="Ej: 8" value="" />
             <p class="error-msg" id="antiguedad-error">Ingresá un número entero entre 0 y 100.</p>
           </div>
-          <div class="factor-badge">
-            Factor: <strong id="factor-valor">—</strong>
+	  <div style="flex-shrink: 0;">
+  	    <label style="display:block; visibility:hidden; font-size:.76rem; margin-bottom:6px;">‎&nbsp;</label>
+            <div class="factor-badge">
+              Factor: <strong id="factor-valor">—</strong>
+            </div>
           </div>
         </div>
       </div>
