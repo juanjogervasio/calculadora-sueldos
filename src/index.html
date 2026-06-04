@@ -12,7 +12,6 @@
   />
 
   <style>
-    /* ── Variables ─────────────────────────────────────────── */
     :root {
       --bg:        #0e1a2b;
       --surface:   #16263d;
@@ -24,11 +23,11 @@
       --text-muted:#7a9cbf;
       --green:     #3ecf8e;
       --red:       #e05c5c;
+      --purple:    #9b7fe8;
       --radius:    12px;
       --shadow:    0 8px 32px rgba(0,0,0,.45);
     }
 
-    /* ── Reset ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -40,21 +39,23 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 16px 80px;
+      padding: 40px 24px 80px;
       background-image:
         radial-gradient(ellipse 80% 50% at 50% -20%, rgba(232,184,75,.12) 0%, transparent 60%),
         repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 59px,
-          rgba(42,66,104,.25) 60px
-        );
+	  0deg, 
+	  transparent, 
+	  transparent 59px, 
+	  rgba(42,66,104,.25) 60px
+ 	);
     }
 
-    /* ── Header ────────────────────────────────────────────── */
+    /* ── Header ── */
     header {
       text-align: center;
       margin-bottom: 40px;
+      width: 100%;
+      max-width: 1200px;
       animation: fadeDown .7s ease both;
     }
 
@@ -68,66 +69,55 @@
 
     h1 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-size: clamp(1.8rem, 4vw, 3rem);
       font-weight: 700;
       line-height: 1.15;
       color: #fff;
-      max-width: 640px;
     }
 
     h1 span { color: var(--gold); }
 
-    .subtitle {
-      margin-top: 14px;
-      font-size: .95rem;
-      color: var(--text-muted);
-      max-width: 520px;
-      margin-inline: auto;
-      line-height: 1.6;
-    }
-
-    .subtitle.fuente {
-      font-size: .82rem;
-      margin-top: 10px;
-      color: #56789a;
-    }
-
+    .subtitle { margin-top: 14px; font-size: .95rem; color: var(--text-muted); max-width: 680px; margin-inline: auto; line-height: 1.6;}
+    .subtitle strong { color: var(--gold); font-weight: 600; }
+    .subtitle.fuente { font-size: .82rem; margin-top: 10px; color: #56789a; text-align: justify;}
     .subtitle.fuente strong { color: var(--gold); font-weight: 600; }
 
-    /* ── Footer ─────────────────────────────────────────── */
-    footer {
-      margin-top: 40px;
-      font-size: .78rem;
-      color: var(--text-muted);
-      text-align: center;
-      opacity: .7;
+    /* ── Page wrapper ── */
+    .page { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 1200px; }
+
+    /* ── Two-column rows ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    
+    .two-col > * {
+      min-width: 0;
     }
 
-    footer strong {
-      color: var(--text);
+    .canvas-container {
+      overflow: hidden;
+      width: 100%;
     }
 
-    /* ── Card ──────────────────────────────────────────────── */
+    /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 32px;
+      padding: 28px;
       width: 100%;
-      max-width: 680px;
       box-shadow: var(--shadow);
       animation: fadeUp .7s ease both;
     }
 
-    .card + .card { margin-top: 20px; }
-    .card:nth-child(2) { animation-delay: .1s; }
-    .card:nth-child(3) { animation-delay: .2s; }
-
-    /* ── Section label ─────────────────────────────────────── */
+    /* ── Section label ── */
     .section-label {
-      font-size: .72rem;
+      font-size: .68rem;
       font-weight: 600;
-      letter-spacing: .18em;
+      letter-spacing: .16em;
       text-transform: uppercase;
       color: var(--gold);
       margin-bottom: 18px;
@@ -136,81 +126,44 @@
       gap: 10px;
     }
 
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-    /* ── Cargos grid ───────────────────────────────────────── */
+    /* ── Cargos grid ── */
     .cargos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
     }
 
-    .cargo-item label {
-      display: block;
-      font-size: .78rem;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      letter-spacing: .05em;
+    .cargo-item {
+      flex: 0 0 200px;
     }
 
-    select {
+    .cargo-item label { display: block; font-size: .76rem; color: var(--text-muted); margin-bottom: 6px; }
+
+    /* ── Selects & inputs ── */
+    select, input[type="number"] {
       width: 100%;
       background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: 8px;
       color: var(--text);
       font-family: inherit;
-      font-size: .92rem;
-      padding: 10px 12px;
+      font-size: .9rem;
+      padding: 9px 12px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    select {
       cursor: pointer;
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a9cbf' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
-      transition: border-color .2s, box-shadow .2s;
     }
 
-    select:focus {
-      outline: none;
-      border-color: var(--gold-dim);
-      box-shadow: 0 0 0 3px rgba(232,184,75,.12);
-    }
-
-    /* ── Antigüedad ────────────────────────────────────────── */
-    .antiguedad-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .antiguedad-row > div { flex: 1; min-width: 160px; }
-
-    .antiguedad-row label {
-      display: block;
-      font-size: .78rem;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    input[type="number"] {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: .92rem;
-      padding: 10px 12px;
-      transition: border-color .2s, box-shadow .2s;
-    }
-
-    input[type="number"]:focus {
+    select:focus, input[type="number"]:focus {
       outline: none;
       border-color: var(--gold-dim);
       box-shadow: 0 0 0 3px rgba(232,184,75,.12);
@@ -221,43 +174,70 @@
       box-shadow: 0 0 0 3px rgba(224,92,92,.15);
     }
 
-    .error-msg {
-      font-size: .78rem;
-      color: var(--red);
-      margin-top: 6px;
-      display: none;
-    }
-
     input[type="number"]::-webkit-inner-spin-button { opacity: .4; }
+
+    .error-msg { font-size: .76rem; color: var(--red); margin-top: 6px; display: none; }
+
+    /* ── Antigüedad row ── */
+    .antiguedad-row { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+    .antiguedad-row > div { flex: 1; min-width: 130px; }
+    .antiguedad-row label { display: block; font-size: .76rem; color: var(--text-muted); margin-bottom: 6px; }
 
     .factor-badge {
       background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 10px 16px;
-      font-size: .88rem;
+      padding: 9px 14px;
+      font-size: .86rem;
       color: var(--text-muted);
       white-space: nowrap;
       flex-shrink: 0;
     }
 
-    .factor-badge strong { color: var(--gold); font-size: 1rem; }
+    .factor-badge strong { color: var(--gold); font-size: .98rem; }
 
-    /* ── Resultado ─────────────────────────────────────────── */
-    #resultado-card {
-      border-color: rgba(232,184,75,.3);
-    }
-
-    .resultado-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
+    /* ── Más Opciones ── */
+    .mas-opciones-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
 
+    .field-group label {
+      display: block;
+      font-size: .76rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .badge-disabled {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: .68rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      opacity: .7;
+    }
+
+    /* ── Resultado card ── */
+    #resultado-card { border-color: rgba(232,184,75,.3); }
+
+    .resultado-body {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0 40px;
+      align-items: start;
+    }
+
+    .resultado-left { min-width: 190px; }
+
     .resultado-label {
-      font-size: .78rem;
+      font-size: .72rem;
       font-weight: 600;
       letter-spacing: .14em;
       text-transform: uppercase;
@@ -267,22 +247,16 @@
 
     #sueldo-neto {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 6vw, 2.8rem);
+      font-size: clamp(2rem, 4vw, 2.8rem);
       font-weight: 700;
       color: var(--green);
       letter-spacing: -.01em;
       transition: color .3s;
     }
 
-    #sueldo-neto.pending { color: var(--text-muted); font-size: 1.1rem; font-family: inherit; font-weight: 400; }
+    #sueldo-neto.pending { color: var(--text-muted); font-size: 1.05rem; font-family: inherit; font-weight: 400; }
 
-    /* ── Unit toggle ───────────────────────────────────────── */
-    #unit-toggle {
-      display: none;
-      gap: 6px;
-      margin-top: 16px;
-      flex-wrap: wrap;
-    }
+    #unit-toggle { display: none; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
 
     .unit-btn {
       background: var(--surface2);
@@ -290,18 +264,15 @@
       border-radius: 8px;
       color: var(--text-muted);
       font-family: inherit;
-      font-size: .8rem;
+      font-size: .78rem;
       font-weight: 600;
       letter-spacing: .08em;
-      padding: 7px 14px;
+      padding: 6px 12px;
       cursor: pointer;
       transition: border-color .2s, color .2s, background .2s;
     }
 
-    .unit-btn:hover {
-      border-color: var(--gold-dim);
-      color: var(--text);
-    }
+    .unit-btn:hover { border-color: var(--gold-dim); color: var(--text); }
 
     .unit-btn.active {
       background: rgba(232,184,75,.12);
@@ -309,192 +280,348 @@
       color: var(--gold);
     }
 
-    /* ── Tipo de cambio nota ───────────────────────────────── */
-    #tc-nota {
-      display: none;
-      margin-top: 8px;
-      font-size: .76rem;
-      color: var(--text-muted);
-    }
-
+    #tc-nota { display: none; margin-top: 8px; font-size: .74rem; color: var(--text-muted); }
     #tc-nota strong { color: var(--text); }
 
-    /* ── Breakdown table ───────────────────────────────────── */
-    #breakdown {
-      margin-top: 24px;
-      display: none;
-    }
+    /* breakdown: columna derecha del resultado */
+    #breakdown { display: none; }
 
-    #breakdown table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .87rem;
-    }
+    #breakdown table { width: 100%; border-collapse: collapse; font-size: .84rem; }
 
     #breakdown th {
       text-align: left;
       font-weight: 600;
-      font-size: .72rem;
+      font-size: .68rem;
       letter-spacing: .1em;
       text-transform: uppercase;
       color: var(--text-muted);
-      padding: 6px 8px;
+      padding: 5px 7px;
       border-bottom: 1px solid var(--border);
     }
 
-    #breakdown td {
-      padding: 10px 8px;
-      border-bottom: 1px solid rgba(42,66,104,.4);
-      color: var(--text);
-    }
-
+    #breakdown td { padding: 9px 7px; border-bottom: 1px solid rgba(42,66,104,.4); color: var(--text); }
     #breakdown td:last-child { text-align: right; color: var(--green); font-weight: 600; }
-
     #breakdown tr:last-child td { border-bottom: none; font-weight: 700; color: var(--gold); }
 
-    /* ── Nota ──────────────────────────────────────────────── */
-    .nota {
-      margin-top: 12px;
-      font-size: .78rem;
+    /* ── Comparativas row ── */
+    #comparativas-row { display: none; }
+
+    .comparativa-card { border-color: transparent; }
+    #comparativa-canasta { border-color: rgba(232,184,75,.3); }
+    #comparativa-ripte   { border-color: rgba(232,184,75,.3); }
+
+    .chart-legend { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+
+    .legend-item { display: flex; align-items: center; gap: 7px; font-size: .78rem; color: var(--text-muted); }
+    .legend-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+
+    .cobertura-text {
+      margin-top: 18px;
+      font-size: .9rem;
       color: var(--text-muted);
       line-height: 1.6;
+      text-align: center;
     }
 
-    .nota strong { color: var(--text); }
+    .cobertura-text strong { font-size: 1.05rem; }
 
-    /* ── Animations ────────────────────────────────────────── */
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-18px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .cobertura-sub {
+      margin-top: 8px;
+      font-size: .9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      text-align: center;
     }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    .cobertura-sub strong { font-size: 1.05rem; }
 
-    @keyframes pop {
-      0%   { transform: scale(1); }
-      40%  { transform: scale(1.04); }
-      100% { transform: scale(1); }
-    }
+    /* ── Footer ── */
+    footer { margin-top: 40px; font-size: .78rem; color: var(--text-muted); text-align: center; opacity: .7; width: 100%; max-width: 1200px; }
+    footer strong { color: var(--text); }
+
+    /* ── Animations ── */
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(18px);  } to { opacity:1; transform:translateY(0); } }
+    @keyframes pop { 0%{transform:scale(1);} 40%{transform:scale(1.04);} 100%{transform:scale(1);} }
 
     .pop { animation: pop .3s ease; }
+
+    /* ── Responsive ── */
+    @media (max-width: 860px) {
+      .resultado-body { grid-template-columns: 1fr; }
+      #breakdown { margin-top: 20px; }
+    }
+
+    @media (max-width: 680px) {
+      .two-col { grid-template-columns: 1fr; }
+      .mas-opciones-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
   <header>
-    <p class="eyebrow">Universidad pública argentina</p>
-    <h1>Calculadora de<br /><span>Salario Docente Universitario</span></h1>
+    <p class="eyebrow">Universidad Nacional de La Plata</p>
+    <h1>Calculadora de <span>Salario Docente Universitario</span></h1>
     <p class="subtitle">
-      Estimá el sueldo neto de un docente según cargo y antigüedad. Ingresá los cargos 
+      Estimá el sueldo neto de un docente según cargo y antigüedad. Ingresá los cargos
       de tu elección para ver los resultados.
     </p>
     <p class="subtitle fuente">
       Se aplican los descuentos correspondientes por obra social (IOMA), D.S.S. y aportes.
-      No se consideran adicionales, bonos ni deducciones ocasionales.
-      Datos de fuentes propias correspondientes a recibos de sueldo de la
-      Universidad Nacional de La Plata.
-    </p>
-    <p class="subtitle fuente">      
-      Últimos datos vigentes:
-      <strong id="fecha-datos">__FECHA_DATOS__</strong>.
+      No se consideran bonos ni deducciones o sumas fijas ocasionales.
     </p>
     <p class="subtitle fuente">
-      Garantía Salarial Universitaria (feb-25): <strong id="garantia-header">$ __GARANTIA_SALARIAL__</strong>.
+      Datos de fuentes propias correspondientes a recibos de sueldo de la UNLP. Los indicadores
+      económicos corresponden con los publicados por el Gobierno Nacional.
+    </p>
+    <p class="subtitle">
+      Últimos datos vigentes: 
+      <strong id="fecha-datos">__FECHA_DATOS__</strong>.
+    </p>
+    <p class="subtitle">
+      Garantía Salarial Universitaria (feb-25): <strong>$ __GARANTIA_SALARIAL__</strong>.
     </p>
   </header>
 
-  <!-- Card 1: Cargos -->
-  <div class="card">
-    <p class="section-label">Puntos docentes Simples (máx. 5)</p>
-    <div class="cargos-grid" id="cargos-grid">
-      <!-- generado por JS -->
+  <div class="page">
+
+    <!-- ── Fila 1: Cargos (ancho completo) ── -->
+    <div class="card" style="animation-delay:0s">
+      <p class="section-label">Puntos docentes Simples (máx. 5)</p>
+      <div class="cargos-grid" id="cargos-grid"></div>
     </div>
-  </div>
 
-  <!-- Card 2: Antigüedad -->
-  <div class="card">
-    <p class="section-label">Antigüedad</p>
-    <div class="antiguedad-row">
-      <div>
-        <label for="antiguedad">Años de antigüedad</label>
-        <input
-          type="number"
-          id="antiguedad"
-          min="0" max="100" step="1"
-          placeholder="Ej: 8"
-          value=""
-        />
-        <p class="error-msg" id="antiguedad-error">Ingresá un número entero entre 0 y 100.</p>
+    <!-- ── Fila 2: Antigüedad | Más opciones ── -->
+    <div class="two-col">
+
+      <div class="card" style="animation-delay:.1s">
+        <p class="section-label">Antigüedad</p>
+        <div class="antiguedad-row">
+          <div>
+            <label for="antiguedad">Años de antigüedad</label>
+            <input type="number" id="antiguedad" min="0" max="100" step="1" placeholder="Ej: 8" value="" />
+            <p class="error-msg" id="antiguedad-error">Ingresá un número entero entre 0 y 100.</p>
+          </div>
+          <div class="factor-badge">
+            Factor: <strong id="factor-valor">—</strong>
+          </div>
+        </div>
       </div>
-      <div class="factor-badge" id="factor-badge">
-        Factor: <strong id="factor-valor">—</strong>
+
+      <div class="card" style="animation-delay:.2s">
+        <p class="section-label">Más opciones</p>
+        <div class="mas-opciones-grid">
+
+          <div class="field-group">
+            <label for="posgrado">Posgrado</label>
+            <select id="posgrado">
+              <option value="ninguno">Ninguno</option>
+              <option value="especializacion">Especialización</option>
+              <option value="maestria">Maestría</option>
+              <option value="doctorado">Doctorado</option>
+            </select>
+            <span class="badge-disabled">Próximamente</span>
+          </div>
+
+          <div class="field-group">
+            <label for="obra-social">Obra Social</label>
+            <select id="obra-social">
+              <option value="ioma">IOMA</option>
+              <option value="ninguna">Ninguna</option>
+            </select>
+            <span class="badge-disabled">Próximamente</span>
+          </div>
+
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Card 3: Resultado -->
-  <div class="card" id="resultado-card">
-    <p class="section-label">Resultado</p>
-    <div class="resultado-inner">
-      <div style="width:100%">
-        <p class="resultado-label" id="resultado-label">Sueldo Neto estimado</p>
-        <div id="sueldo-neto" class="pending">Completá las opciones</div>
+    </div><!-- /two-col antigüedad + más opciones -->
 
-        <!-- Toggle de unidades (aparece tras el primer cálculo) -->
-        <div id="unit-toggle">
-          <button class="unit-btn active" data-unit="ars">ARS $</button>
-          <button class="unit-btn" data-unit="usd">USD u$s</button>
-          <button class="unit-btn" data-unit="hora">$ / hora</button>
+    <!-- ── Fila resultado (ancho completo) ── -->
+    <div class="card" id="resultado-card" style="animation-delay:.3s">
+      <p class="section-label">Resultado</p>
+      <div class="resultado-body">
+        <div class="resultado-left">
+          <p class="resultado-label" id="resultado-label">Sueldo Neto estimado</p>
+          <div id="sueldo-neto" class="pending">Completá las opciones de cargos y antigüedad</div>
+
+          <div id="unit-toggle">
+            <button class="unit-btn active" data-unit="ars">ARS $</button>
+            <button class="unit-btn" data-unit="usd">USD u$s</button>
+            <button class="unit-btn" data-unit="hora">$ / hora</button>
+          </div>
+          <p id="tc-nota"></p>
         </div>
 
-        <!-- Nota tipo de cambio -->
-        <p id="tc-nota"></p>
+        <div id="breakdown">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+		<th>Cargo</th>
+		<th>Básico</th>
+		<th>Factor ant.</th>
+		<th>Bruto</th>
+		<th>Neto</th>
+              </tr>
+            </thead>
+            <tbody id="breakdown-body"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <div id="breakdown">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Cargo</th>
-            <th>Básico</th>
-            <th>Factor ant.</th>
-            <th>Bruto</th>
-            <th>Neto</th>
-          </tr>
-        </thead>
-        <tbody id="breakdown-body"></tbody>
-      </table>
-    </div>
-  </div>
+    <!-- ── Fila comparativas (2 columnas, oculta hasta calcular) ── -->
+    <div class="two-col" id="comparativas-row">
+
+      <div class="card comparativa-card" id="comparativa-canasta" style="animation-delay:.4s">
+        <p class="section-label">Comparativa — Canasta Básica (__FECHA_CBT__)</p>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#e8b84b;"></span>Canasta Básica Total (1 adulto eq.)</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#3ecf8e;"></span>Sueldo Neto</span>
+        </div>
+        <div style="position:relative;width:100%;height:210px;">
+          <canvas id="chart-canasta" role="img" aria-label="Comparación Canasta Básica vs Sueldo Neto"></canvas>
+        </div>
+        <p class="cobertura-text" id="canasta-text"></p>
+        <p class="cobertura-sub"  id="canasta-sub"></p>
+      </div>
+
+      <div class="card comparativa-card" id="comparativa-ripte" style="animation-delay:.5s">
+        <p class="section-label">Comparativa — Promedio Trab. Estables (RIPTE) (__FECHA_RIPTE__)</p>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#9b7fe8;"></span>RIPTE</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#3ecf8e;"></span>Sueldo Neto</span>
+        </div>
+        <div style="position:relative;width:100%;height:210px;">
+          <canvas id="chart-ripte" role="img" aria-label="Comparación RIPTE vs Sueldo Neto"></canvas>
+        </div>
+        <p class="cobertura-text" id="ripte-text"></p>
+        <p class="cobertura-sub"  id="ripte-sub"></p>
+      </div>
+
+    </div><!-- /comparativas-row -->
+
+  </div><!-- /page -->
 
   <footer>
     Desarrollado por <strong>Juan José Gervasio</strong> · 2026
   </footer>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
   <script>
     // ── Datos ──────────────────────────────────────────────────────────────
     const BASICOS = __BASICOS__ ;
 
     const OPCIONES = Object.keys(BASICOS);
 
-    const DESCUENTOS          = 0.2279;
-    const GARANTIA_SALARIAL   = __GARANTIA_SALARIAL__;
-    const TIPO_DE_CAMBIO      = __TIPO_DE_CAMBIO__;   // ARS por USD
+    const DESCUENTOS                = 0.2279;
+    const GARANTIA_SALARIAL         = __GARANTIA_SALARIAL__;
+    const TIPO_DE_CAMBIO            = __TIPO_DE_CAMBIO__;
+    const CANASTA_BASICA            = __CANASTA_BASICA__;
+    const RIPTE                     = __RIPTE__;
     const HORAS_SEMANALES_POR_CARGO = 9;
-    const SEMANAS_POR_MES     = 4;
+    const SEMANAS_POR_MES           = 4;
 
-    // ── Estado global del resultado ────────────────────────────────────────
-    let estado = {
-      totalNeto:      null,
-      cantidadCargos: null,   // cargos reales (no "Ninguno")
-      unidad:         "ars",
+    let estado = { totalNeto: null, cantidadCargos: null, unidad: "ars" };
+
+    // ── Charts ─────────────────────────────────────────────────────────────
+    const CHART_BASE_OPTIONS = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: (ctx) => " $ " + Math.round(ctx.raw).toLocaleString("es-AR") },
+          backgroundColor: "#16263d",
+          borderColor: "#2a4268",
+          borderWidth: 1,
+          titleColor: "#dde6f0",
+          bodyColor: "#7a9cbf",
+          padding: 10,
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: "rgba(42,66,104,0.35)" },
+          border: { color: "rgba(42,66,104,0.5)" },
+          ticks: { color: "#7a9cbf", font: { family: "'Source Sans 3', sans-serif", size: 12 } }
+        },
+        y: {
+          grid: { color: "rgba(42,66,104,0.35)" },
+          border: { color: "rgba(42,66,104,0.5)" },
+          ticks: {
+            color: "#7a9cbf",
+            font: { family: "'Source Sans 3', sans-serif", size: 11 },
+            callback: (v) => "$ " + (v / 1000).toFixed(0) + "k"
+          }
+        }
+      }
     };
+
+    function makeChart(canvasId, labels, colors, initialData) {
+      const ctx = document.getElementById(canvasId).getContext("2d");
+      return new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{ data: initialData, backgroundColor: colors, borderRadius: 6, borderSkipped: false, borderWidth: 0 }]
+        },
+        options: JSON.parse(JSON.stringify(CHART_BASE_OPTIONS))
+      });
+    }
+
+    let chartCanasta, chartRipte;
+
+    function initCharts() {
+      chartCanasta = makeChart("chart-canasta", ["Canasta Básica Total", "Sueldo Neto"], ["#e8b84b", "#3ecf8e"], [CANASTA_BASICA, 0]);
+      chartRipte   = makeChart("chart-ripte",   ["RIPTE", "Sueldo Neto"],               ["#9b7fe8", "#3ecf8e"], [RIPTE, 0]);
+    }
+
+    // ── Comparativas ───────────────────────────────────────────────────────
+    function actualizarComparativas(netoTotal) {
+      const row = document.getElementById("comparativas-row");
+
+      if (netoTotal === null) {
+        row.style.display = "none";
+        return;
+      }
+
+      row.style.display = "grid";
+
+      // Canasta
+      chartCanasta.data.datasets[0].data = [CANASTA_BASICA, netoTotal];
+      chartCanasta.update("active");
+
+      const cob    = netoTotal / CANASTA_BASICA;
+      const cobStr = cob.toFixed(1);
+      const dC     = netoTotal - CANASTA_BASICA;
+      const dCStr  = "$ " + Math.round(Math.abs(dC)).toLocaleString("es-AR");
+
+      document.getElementById("canasta-text").innerHTML =
+        `Con este sueldo alcanzás a cubrir <strong style="color:var(--green)">${cobStr}</strong> Canasta${cob !== 1 ? "s" : ""} Básica${cob !== 1 ? "s" : ""}.`;
+      document.getElementById("canasta-sub").innerHTML = dC >= 0
+        ? `Estás <strong style="color:var(--green)">${dCStr}</strong> por encima de la línea de pobreza.`
+        : `Estás <strong style="color:var(--red)">${dCStr}</strong> por debajo de la línea de pobreza.`;
+
+      // RIPTE
+      chartRipte.data.datasets[0].data = [RIPTE, netoTotal];
+      chartRipte.update("active");
+
+      const pct    = (netoTotal / RIPTE - 1) * 100;
+      const pctAbs = Math.abs(pct).toFixed(1);
+      const pctDir = pct >= 0 ? "por encima" : "por debajo";
+      const pctCol = pct >= 0 ? "var(--green)" : "var(--red)";
+      const dR     = netoTotal - RIPTE;
+      const dRStr  = "$ " + Math.round(Math.abs(dR)).toLocaleString("es-AR");
+
+      document.getElementById("ripte-text").innerHTML =
+        `Tu sueldo se encuentra un <strong style="color:${pctCol}">${pctAbs}%</strong> ${pctDir} del promedio de salarios estables.`;
+      document.getElementById("ripte-sub").innerHTML = dR >= 0
+        ? `Tu sueldo supera el RIPTE en <strong style="color:var(--green)">${dRStr}</strong>.`
+        : `Tu sueldo está <strong style="color:var(--red)">${dRStr}</strong> por debajo del RIPTE.`;
+    }
 
     // ── Factor antigüedad ──────────────────────────────────────────────────
     function factorAntiguedad(años) {
@@ -513,27 +640,24 @@
       return 2.2;
     }
 
-    // ── Render selects ─────────────────────────────────────────────────────
+    // ── Render selects de cargos ───────────────────────────────────────────
     const grid = document.getElementById("cargos-grid");
-
     for (let i = 1; i <= 5; i++) {
       const div = document.createElement("div");
       div.className = "cargo-item";
       div.innerHTML = `
         <label for="cargo-${i}">Cargo ${i}</label>
-        <select id="cargo-${i}" data-index="${i}">
-          ${OPCIONES.map(o =>
-            `<option value="${o}" ${o === "Ninguno" ? "selected" : ""}>${o}</option>`
-          ).join("")}
+        <select id="cargo-${i}">
+          ${OPCIONES.map(o => `<option value="${o}" ${o === "Ninguno" ? "selected" : ""}>${o}</option>`).join("")}
         </select>
       `;
       grid.appendChild(div);
     }
 
     // ── Listeners ──────────────────────────────────────────────────────────
-    document.querySelectorAll("select").forEach(s => s.addEventListener("change", calcular));
+    document.querySelectorAll("select[id^='cargo-']").forEach(s => s.addEventListener("change", calcular));
     document.getElementById("antiguedad").addEventListener("input", calcular);
-
+    // posgrado y obra-social: sin efecto por ahora
     document.getElementById("unit-toggle").addEventListener("click", e => {
       const btn = e.target.closest(".unit-btn");
       if (!btn) return;
@@ -548,25 +672,22 @@
       const antiguedadInput = document.getElementById("antiguedad").value;
       const factor = factorAntiguedad(antiguedadInput);
 
-      const factorEl = document.getElementById("factor-valor");
-      const inputEl  = document.getElementById("antiguedad");
-      const errorEl  = document.getElementById("antiguedad-error");
-      const rawVal   = antiguedadInput.trim();
+      const inputEl = document.getElementById("antiguedad");
+      const errorEl = document.getElementById("antiguedad-error");
+      const rawVal  = antiguedadInput.trim();
 
       if (rawVal !== "" && factor === null) {
         inputEl.classList.add("input-error");
         errorEl.style.display = "block";
-        factorEl.textContent = "—";
+        document.getElementById("factor-valor").textContent = "—";
       } else {
         inputEl.classList.remove("input-error");
         errorEl.style.display = "none";
-        factorEl.textContent = factor !== null ? `×${factor.toFixed(2)}` : "—";
+        document.getElementById("factor-valor").textContent = factor !== null ? `×${factor.toFixed(2)}` : "—";
       }
 
       const cargos = [];
-      for (let i = 1; i <= 5; i++) {
-        cargos.push(document.getElementById(`cargo-${i}`).value);
-      }
+      for (let i = 1; i <= 5; i++) cargos.push(document.getElementById(`cargo-${i}`).value);
 
       const netoEl    = document.getElementById("sueldo-neto");
       const breakdown = document.getElementById("breakdown");
@@ -576,82 +697,69 @@
       const algunoCargo = cargos.some(c => c !== "Ninguno");
       if (factor === null || !algunoCargo) {
         netoEl.className = "pending";
-        netoEl.textContent = "Completá las opciones";
+        netoEl.textContent = "Completá las opciones de cargos y antigüedad";
         breakdown.style.display = "none";
         toggle.style.display = "none";
         estado.totalNeto = null;
         estado.cantidadCargos = null;
+        actualizarComparativas(null);
         return;
       }
 
-      // Calcular
-      let totalNeto = 0;
-      let cantidadCargos = 0;
+      let totalNeto = 0, cantidadCargos = 0;
       tbody.innerHTML = "";
 
       cargos.forEach((cargo, idx) => {
         const basico = BASICOS[cargo] ?? 0;
-        let   bruto  = basico * factor;
+        let bruto = basico * factor;
         if (bruto > 0 && bruto < GARANTIA_SALARIAL) bruto = GARANTIA_SALARIAL;
-        const neto   = bruto * (1 - DESCUENTOS);
-        totalNeto   += neto;
-
+        const neto = bruto * (1 - DESCUENTOS);
+        totalNeto += neto;
         if (cargo === "Ninguno") return;
-
         cantidadCargos++;
-
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${idx + 1}</td>
-          <td>${cargo}</td>
-          <td>${fmt(basico)}</td>
-          <td>×${factor.toFixed(2)}</td>
-          <td>${fmt(bruto)}</td>
-          <td>${fmt(neto)}</td>
+          <td>${idx + 1}</td><td>${cargo}</td><td>${fmt(basico)}</td>
+          <td>×${factor.toFixed(2)}</td><td>${fmt(bruto)}</td><td>${fmt(neto)}</td>
         `;
         tbody.appendChild(tr);
       });
 
-      // Fila total
       const trTotal = document.createElement("tr");
       trTotal.innerHTML = `
-        <td colspan="5" style="text-align:right; padding-top:12px;">TOTAL NETO</td>
+        <td colspan="5" style="text-align:right;padding-top:12px;">TOTAL NETO</td>
         <td style="padding-top:12px;">${fmt(totalNeto)}</td>
       `;
       tbody.appendChild(trTotal);
 
-      // Guardar en estado y mostrar
       estado.totalNeto      = totalNeto;
       estado.cantidadCargos = cantidadCargos;
-
-      toggle.style.display = "flex";
+      toggle.style.display    = "flex";
       breakdown.style.display = "block";
       mostrarResultado();
+      actualizarComparativas(totalNeto);
     }
 
-    // ── Mostrar resultado según unidad activa ──────────────────────────────
+    // ── Mostrar resultado según unidad ─────────────────────────────────────
     function mostrarResultado() {
-      const netoEl  = document.getElementById("sueldo-neto");
-      const label   = document.getElementById("resultado-label");
-      const tcNota  = document.getElementById("tc-nota");
-
+      const netoEl = document.getElementById("sueldo-neto");
+      const label  = document.getElementById("resultado-label");
+      const tcNota = document.getElementById("tc-nota");
       if (estado.totalNeto === null) return;
-
       netoEl.className = "";
 
       switch (estado.unidad) {
-        case "ars": {
+        case "ars":
           label.textContent = "Sueldo Neto estimado";
           netoEl.textContent = fmt(estado.totalNeto);
           tcNota.style.display = "none";
           break;
-        }
         case "usd": {
           const usd = estado.totalNeto / TIPO_DE_CAMBIO;
           label.textContent = "Sueldo Neto estimado (USD)";
           netoEl.textContent = fmtUSD(usd);
           tcNota.style.display = "block";
-          tcNota.innerHTML = `Tipo de cambio utilizado: <strong>$ ${fmtNum(TIPO_DE_CAMBIO)} ARS/USD</strong>`;
+          tcNota.innerHTML = `TC utilizado: <strong>$ ${fmtNum(TIPO_DE_CAMBIO)} ARS/USD</strong>`;
           break;
         }
         case "hora": {
@@ -661,7 +769,7 @@
           netoEl.textContent = fmt(porHora) + " /h";
           tcNota.style.display = "block";
           tcNota.innerHTML = `
-            Basado en <strong>${estado.cantidadCargos} cargo${estado.cantidadCargos > 1 ? "s" : ""}</strong>
+            <strong>${estado.cantidadCargos} cargo${estado.cantidadCargos > 1 ? "s" : ""}</strong>
             × ${HORAS_SEMANALES_POR_CARGO} h/sem × ${SEMANAS_POR_MES} sem =
             <strong>${horasMes} h/mes</strong>
           `;
@@ -673,18 +781,12 @@
       setTimeout(() => netoEl.classList.remove("pop"), 350);
     }
 
-    // ── Helpers de formato ─────────────────────────────────────────────────
-    function fmt(n) {
-      return "$ " + Math.round(n).toLocaleString("es-AR");
-    }
+    // ── Helpers ────────────────────────────────────────────────────────────
+    function fmt(n)    { return "$ " + Math.round(n).toLocaleString("es-AR"); }
+    function fmtUSD(n) { return "u$s " + n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function fmtNum(n) { return n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
-    function fmtUSD(n) {
-      return "u$s " + n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    function fmtNum(n) {
-      return n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
+    initCharts();
   </script>
 </body>
 </html>
