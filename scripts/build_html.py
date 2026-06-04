@@ -49,6 +49,8 @@ INDICADORES_CSV = DATA_DIR / "indicadores.csv"
 # Nombre exacto de la columna "indicador" en indicadores.csv
 KEY_TC          = "Tipo de cambio minorista"
 KEY_GARANTIA    = "Garantía Salarial"
+KEY_CBT         = "Canasta Básica"
+KEY_RIPTE       = "RIPTE"
 
 
 
@@ -115,13 +117,24 @@ def build() -> None:
         sys.exit(f"[ERROR] '{KEY_TC}' no encontrado en {INDICADORES_CSV}")
     if KEY_GARANTIA not in indicadores:
         sys.exit(f"[ERROR] '{KEY_GARANTIA}' no encontrado en {INDICADORES_CSV}")
+    if KEY_CBT not in indicadores:
+        sys.exit(f"[ERROR] '{KEY_CBT}' no encontrado en {INDICADORES_CSV}")
+    if KEY_RIPTE not in indicadores:
+        sys.exit(f"[ERROR] '{KEY_RIPTE}' no encontrado en {INDICADORES_CSV}")
 
-    tipo_de_cambio, _   = indicadores[KEY_TC]
-    garantia, _         = indicadores[KEY_GARANTIA]
+    tipo_de_cambio, _           = indicadores[KEY_TC]
+    garantia, _                 = indicadores[KEY_GARANTIA]
+    canasta_basica, fecha_cbt   = indicadores[KEY_CBT]
+    ripte, fecha_ripte          = indicadores[KEY_RIPTE]
+    
 
     # Fecha de datos: la más reciente entre todos los básicos
     fecha_datos_iso  = max(fechas_basicos)
     fecha_datos_str  = fecha_legible(fecha_datos_iso)
+    
+    # Fechas de indicadores
+    fecha_cbt_str   = fecha_legible(fecha_cbt)
+    fecha_ripte_str = fecha_legible(fecha_ripte)
 
     # ── Serializar BASICOS como JSON inline para JS ────────────────────────
     # Formato: { "Cargo": valor, ... }  con 2 decimales
@@ -139,7 +152,11 @@ def build() -> None:
         "__BASICOS__":          basicos_js,
         "__TIPO_DE_CAMBIO__":   f"{tipo_de_cambio:.2f}",
         "__GARANTIA_SALARIAL__":f"{garantia:.2f}",
+        "__CANASTA_BASICA__":   f"{canasta_basica:.2f}",
+        "__RIPTE__":            f"{ripte:.2f}",
         "__FECHA_DATOS__":      fecha_datos_str,
+        "__FECHA_CBT__":        fecha_cbt_str,
+        "__FECHA_RIPTE__":      fecha_ripte_str
     }
 
     for placeholder, value in replacements.items():
@@ -152,7 +169,11 @@ def build() -> None:
     print(f"     Básicos:          {len(basicos) - 1} cargos")
     print(f"     Tipo de cambio:   $ {tipo_de_cambio:,.2f} ARS/USD")
     print(f"     Garantía salarial:$ {garantia:,.2f}")
+    print(f"     Canasta Básica:   $ {canasta_basica:,.2f}")
+    print(f"     RIPTE:            $ {ripte:,.2f}")
     print(f"     Fecha de datos:   {fecha_datos_str}")
+    print(f"     Fecha de CBT:     {fecha_cbt_str}")
+    print(f"     Fecha de RIPTE:   {fecha_ripte_str}")
 
 
 if __name__ == "__main__":
