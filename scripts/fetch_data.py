@@ -3,7 +3,7 @@
 Created on Fri May  8 19:43:36 2026
 
 @author: gerva
-UPDATE: Mayo 2025
+UPDATE: Mayo 2026
 Generador de tablas: basicos.csv y indicadores.csv 
 """
 from pathlib import Path
@@ -75,6 +75,9 @@ indicadores.loc[2] = ["Canasta Básica", cbt_ultimo[-1], cbt_ultimo[-2]]
 # RIPTE: extraido de Datos.gob
 id_ripte = "?ids=158.1_REPTE_0_0_5"
 ripte_json = requests.get(url_datosgob + id_ripte + "&start_date=2020-01-01").json() 
+ripte_ultimo = ripte_json["data"][-1]
+
+indicadores.loc[3] = ["RIPTE", ripte_ultimo[-1], ripte_ultimo[-2]]
 
 # Guardo los resultados en /data/indicadores.csv
 indicadores.to_csv(DATA_DIR / "indicadores.csv", index=False)
