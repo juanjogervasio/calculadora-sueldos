@@ -3,7 +3,7 @@
 Created on Fri May  8 19:43:36 2026
 
 @author: gerva
-UPDATE: Mayo 2026
+UPDATE: Junio 2026
 Generador de tablas: basicos.csv y indicadores.csv 
 """
 from pathlib import Path
@@ -23,11 +23,11 @@ cargos = ["Profesor Adjunto",
           "Jefe de Trabajos Prácticos",
           "Ayudante de Primera"]
 
-basicos = [313207.47, 
-           268985.05,
-           224713.81]
+basicos = [380014.62, 
+           326359.56,
+           272645.27]
 
-fecha = [dt.date(2026,5,1) for i in range(3)]
+fecha = [dt.date(2026,6,1) for i in range(3)]
 
 basicos = pd.DataFrame(data = {
                     "cargo" : cargos,
@@ -52,7 +52,7 @@ indicadores = pd.DataFrame(columns = ["indicador", "valor", "fecha"])
 # GARANTIA SALARIAL: extraido de 
 # https://unlp.edu.ar/transparencia/transparencia-activa/escalas-salariales/
 
-indicadores.loc[0] = ["Garantía Salarial", 308641.98, dt.date(2025,2,1)]
+indicadores.loc[0] = ["Garantía Salarial", 374485.49, dt.date(2026,6,1)]
 
 
 # DOLAR OFICIAL MINORISTA: extraido de BCRA
