@@ -359,6 +359,90 @@
       .two-col { grid-template-columns: 1fr; }
       .mas-opciones-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── Info tooltip ──────────────────────────────────────── */
+    .info-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+ 
+    .info-btn {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 1px solid var(--gold-dim);
+      background: transparent;
+      color: var(--gold-dim);
+      font-size: .62rem;
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+      cursor: default;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .15s, color .15s, background .15s;
+      flex-shrink: 0;
+      user-select: none;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+ 
+    .info-wrap:hover .info-btn {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(232,184,75,.1);
+    }
+ 
+    .info-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-size: .8rem;
+      line-height: 1.8;
+      color: var(--text);
+      white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+ 
+    /* flecha apuntando hacia abajo (hacia el ícono) */
+    .info-tooltip::before {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 9px;
+      height: 9px;
+      background: var(--surface2);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+ 
+    .info-wrap:hover .info-tooltip {
+      opacity: 1;
+    }
+ 
+    .info-tooltip strong {
+      color: var(--gold);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+    }
+
   </style>
 </head>
 <body>
@@ -380,10 +464,10 @@
     </p>
     <p class="subtitle">
       Últimos datos vigentes: 
-      <strong id="fecha-datos">Mayo 2026</strong>.
+      <strong id="fecha-datos">Junio 2026</strong>.
     </p>
     <p class="subtitle">
-      Garantía Salarial Universitaria (feb-25): <strong>$ 308641.98</strong>.
+      Garantía Salarial Universitaria (feb-25): <strong>$ 374485.49</strong>.
     </p>
   </header>
 
@@ -391,7 +475,17 @@
 
     <!-- ── Fila 1: Cargos (ancho completo) ── -->
     <div class="card" style="animation-delay:0s">
-      <p class="section-label">Puntos docentes Simples (máx. 5)</p>
+      <p class="section-label">
+        Puntos docentes Simples (máx. 5)
+        <span class="info-wrap">
+          <span class="info-btn">i</span>
+          <span class="info-tooltip">
+            <strong>Equivalencias para mayor dedicación:</strong>
+            Exclusiva = 4 Cargos Simples<br>
+            Semiexclusiva = 2 Cargos Simples
+          </span>
+        </span>
+      </p>
       <div class="cargos-grid" id="cargos-grid"></div>
     </div>
 
@@ -482,7 +576,16 @@
     <div class="two-col" id="comparativas-row">
 
       <div class="card comparativa-card" id="comparativa-canasta" style="animation-delay:.4s">
-        <p class="section-label">Comparativa — Canasta Básica (Mayo 2026)</p>
+        <p class="section-label">
+	Comparativa — Canasta Básica (Mayo 2026)
+	<span class="info-wrap">
+          <span class="info-btn">i</span>
+          <span class="info-tooltip">
+	    Se compara con la CBT para 1 adulto equivalente.<br>            
+	    Para una familia tipo: 3,09 unidades de adulto equiv.
+          </span>
+        </span>	
+	</p>
         <div class="chart-legend">
           <span class="legend-item"><span class="legend-dot" style="background:#e8b84b;"></span>Canasta Básica Total (1 adulto eq.)</span>
           <span class="legend-item"><span class="legend-dot" style="background:#3ecf8e;"></span>Sueldo Neto</span>
@@ -519,16 +622,16 @@
   <script>
     // ── Datos ──────────────────────────────────────────────────────────────
     const BASICOS = {
-      "Profesor Adjunto": 313207.47,
-      "Jefe de Trabajos Prácticos": 268985.05,
-      "Ayudante de Primera": 224713.81,
+      "Profesor Adjunto": 380014.62,
+      "Jefe de Trabajos Prácticos": 326359.56,
+      "Ayudante de Primera": 272645.27,
       "Ninguno": 0.00
     } ;
 
     const OPCIONES = Object.keys(BASICOS);
 
     const DESCUENTOS                = 0.2279;
-    const GARANTIA_SALARIAL         = 308641.98;
+    const GARANTIA_SALARIAL         = 374485.49;
     const TIPO_DE_CAMBIO            = 1502.09;
     const CANASTA_BASICA            = 485029.58;
     const RIPTE                     = 1837609.35;
