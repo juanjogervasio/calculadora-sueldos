@@ -304,6 +304,7 @@
 
     #breakdown td { padding: 9px 7px; border-bottom: 1px solid rgba(42,66,104,.4); color: var(--text); }
     #breakdown td:last-child { text-align: right; color: var(--green); font-weight: 600; }
+    #breakdown th:last-child { text-align: right; }
     #breakdown tr:last-child td { border-bottom: none; font-weight: 700; color: var(--gold); }
 
     /* ── Comparativas row ── */
@@ -456,7 +457,7 @@
     </p>
     <p class="subtitle fuente">
       Se aplican los descuentos correspondientes por obra social (IOMA), D.S.S. y aportes.
-      No se consideran bonos ni deducciones o sumas fijas ocasionales.
+      No se consideran bonos, aguinaldo ni deducciones o sumas fijas ocasionales.
     </p>
     <p class="subtitle fuente">
       Datos de fuentes propias correspondientes a recibos de sueldo de la UNLP. Los indicadores
@@ -464,10 +465,10 @@
     </p>
     <p class="subtitle">
       Últimos datos vigentes: 
-      <strong id="fecha-datos">Mayo 2026</strong>.
+      <strong id="fecha-datos">Junio 2026</strong>.
     </p>
     <p class="subtitle">
-      Garantía Salarial Universitaria (feb-25): <strong>$ 308641.98</strong>.
+      Garantía Salarial Universitaria (jun-26): <strong>$ 374485.49</strong>.
     </p>
   </header>
 
@@ -521,7 +522,6 @@
               <option value="maestria">Maestría</option>
               <option value="doctorado">Doctorado</option>
             </select>
-            <span class="badge-disabled">Próximamente</span>
           </div>
 
           <div class="field-group">
@@ -530,7 +530,6 @@
               <option value="ioma">IOMA</option>
               <option value="ninguna">Ninguna</option>
             </select>
-            <span class="badge-disabled">Próximamente</span>
           </div>
 
         </div>
@@ -577,7 +576,7 @@
 
       <div class="card comparativa-card" id="comparativa-canasta" style="animation-delay:.4s">
         <p class="section-label">
-	Comparativa — Canasta Básica (Abril 2026)
+	Comparativa — Canasta Básica (Mayo 2026)
 	<span class="info-wrap">
           <span class="info-btn">i</span>
           <span class="info-tooltip">
@@ -598,7 +597,7 @@
       </div>
 
       <div class="card comparativa-card" id="comparativa-ripte" style="animation-delay:.5s">
-        <p class="section-label">Comparativa — Promedio Trab. Estables (RIPTE) (Marzo 2026)</p>
+        <p class="section-label">Comparativa — Promedio Trab. Estables (RIPTE) (Abril 2026)</p>
         <div class="chart-legend">
           <span class="legend-item"><span class="legend-dot" style="background:#9b7fe8;"></span>RIPTE</span>
           <span class="legend-item"><span class="legend-dot" style="background:#3ecf8e;"></span>Sueldo Neto</span>
@@ -622,19 +621,21 @@
   <script>
     // ── Datos ──────────────────────────────────────────────────────────────
     const BASICOS = {
-      "Profesor Adjunto": 313207.47,
-      "Jefe de Trabajos Prácticos": 268985.05,
-      "Ayudante de Primera": 224713.81,
+      "Profesor Adjunto": 380014.62,
+      "Jefe de Trabajos Prácticos": 326359.56,
+      "Ayudante de Primera": 272645.27,
       "Ninguno": 0.00
     } ;
 
     const OPCIONES = Object.keys(BASICOS);
 
-    const DESCUENTOS                = 0.2279;
-    const GARANTIA_SALARIAL         = 308641.98;
-    const TIPO_DE_CAMBIO            = 1460.67;
-    const CANASTA_BASICA            = 475653.04;
-    const RIPTE                     = 1775664.12;
+    const DESCUENTOS_BASE           = 0.2079; // Jubilacion y aportes, fijo
+    let   IOMA                      = 0.0199; // Obra social IOMA
+    let   POSGRADO                  = 0;      // Por defecto, sin posgrado
+    const GARANTIA_SALARIAL         = 374485.49;
+    const TIPO_DE_CAMBIO            = 1513.07;
+    const CANASTA_BASICA            = 485029.58;
+    const RIPTE                     = 1837609.35;
     const HORAS_SEMANALES_POR_CARGO = 9;
     const SEMANAS_POR_MES           = 4;
 
@@ -771,7 +772,15 @@
     // ── Listeners ──────────────────────────────────────────────────────────
     document.querySelectorAll("select[id^='cargo-']").forEach(s => s.addEventListener("change", calcular));
     document.getElementById("antiguedad").addEventListener("input", calcular);
-    // posgrado y obra-social: sin efecto por ahora
+    document.getElementById("obra-social").addEventListener("change", e => {
+      IOMA = e.target.value === "ioma" ? 0.0199 : 0;
+      calcular();
+    });
+    document.getElementById("posgrado").addEventListener("change", e => {
+      const VALORES_POSGRADO = { ninguno: 0, especializacion: 0.05, maestria: 0.08, doctorado: 0.18 };
+      POSGRADO = VALORES_POSGRADO[e.target.value] ?? 0;
+      calcular();
+    });
     document.getElementById("unit-toggle").addEventListener("click", e => {
       const btn = e.target.closest(".unit-btn");
       if (!btn) return;
@@ -783,6 +792,8 @@
 
     // ── Cálculo ────────────────────────────────────────────────────────────
     function calcular() {
+      const DESCUENTOS = DESCUENTOS_BASE + IOMA;
+    
       const antiguedadInput = document.getElementById("antiguedad").value;
       const factor = factorAntiguedad(antiguedadInput);
 
@@ -825,7 +836,7 @@
 
       cargos.forEach((cargo, idx) => {
         const basico = BASICOS[cargo] ?? 0;
-        let bruto = basico * factor;
+        let bruto = basico * factor * (1 + POSGRADO);
         if (bruto > 0 && bruto < GARANTIA_SALARIAL) bruto = GARANTIA_SALARIAL;
         const neto = bruto * (1 - DESCUENTOS);
         totalNeto += neto;

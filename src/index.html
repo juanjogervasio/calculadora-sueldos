@@ -457,7 +457,7 @@
     </p>
     <p class="subtitle fuente">
       Se aplican los descuentos correspondientes por obra social (IOMA), D.S.S. y aportes.
-      No se consideran bonos, agüinaldo ni deducciones o sumas fijas ocasionales.
+      No se consideran bonos, aguinaldo ni deducciones o sumas fijas ocasionales.
     </p>
     <p class="subtitle fuente">
       Datos de fuentes propias correspondientes a recibos de sueldo de la UNLP. Los indicadores
@@ -522,7 +522,6 @@
               <option value="maestria">Maestría</option>
               <option value="doctorado">Doctorado</option>
             </select>
-            <span class="badge-disabled">Próximamente</span>
           </div>
 
           <div class="field-group">
@@ -531,7 +530,6 @@
               <option value="ioma">IOMA</option>
               <option value="ninguna">Ninguna</option>
             </select>
-            <span class="badge-disabled">Próximamente</span>
           </div>
 
         </div>
@@ -626,7 +624,9 @@
 
     const OPCIONES = Object.keys(BASICOS);
 
-    const DESCUENTOS                = 0.2279;
+    const DESCUENTOS_BASE           = 0.2079; // Jubilacion y aportes, fijo
+    let   IOMA                      = 0.0199; // Obra social IOMA
+    let   POSGRADO                  = 0;      // Por defecto, sin posgrado
     const GARANTIA_SALARIAL         = __GARANTIA_SALARIAL__;
     const TIPO_DE_CAMBIO            = __TIPO_DE_CAMBIO__;
     const CANASTA_BASICA            = __CANASTA_BASICA__;
@@ -767,7 +767,15 @@
     // ── Listeners ──────────────────────────────────────────────────────────
     document.querySelectorAll("select[id^='cargo-']").forEach(s => s.addEventListener("change", calcular));
     document.getElementById("antiguedad").addEventListener("input", calcular);
-    // posgrado y obra-social: sin efecto por ahora
+    document.getElementById("obra-social").addEventListener("change", e => {
+      IOMA = e.target.value === "ioma" ? 0.0199 : 0;
+      calcular();
+    });
+    document.getElementById("posgrado").addEventListener("change", e => {
+      const VALORES_POSGRADO = { ninguno: 0, especializacion: 0.05, maestria: 0.08, doctorado: 0.18 };
+      POSGRADO = VALORES_POSGRADO[e.target.value] ?? 0;
+      calcular();
+    });
     document.getElementById("unit-toggle").addEventListener("click", e => {
       const btn = e.target.closest(".unit-btn");
       if (!btn) return;
@@ -779,6 +787,8 @@
 
     // ── Cálculo ────────────────────────────────────────────────────────────
     function calcular() {
+      const DESCUENTOS = DESCUENTOS_BASE + IOMA;
+    
       const antiguedadInput = document.getElementById("antiguedad").value;
       const factor = factorAntiguedad(antiguedadInput);
 
@@ -821,7 +831,7 @@
 
       cargos.forEach((cargo, idx) => {
         const basico = BASICOS[cargo] ?? 0;
-        let bruto = basico * factor;
+        let bruto = basico * factor * (1 + POSGRADO);
         if (bruto > 0 && bruto < GARANTIA_SALARIAL) bruto = GARANTIA_SALARIAL;
         const neto = bruto * (1 - DESCUENTOS);
         totalNeto += neto;
