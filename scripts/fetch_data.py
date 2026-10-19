@@ -3,7 +3,7 @@
 Created on Fri May  8 19:43:36 2026
 
 @author: gerva
-UPDATE: Septiembre 2026
+UPDATE: Octubre 2026
 Generador de tablas: basicos.csv y indicadores.csv 
 """
 from pathlib import Path
@@ -78,6 +78,8 @@ id_ripte = "?ids=158.1_REPTE_0_0_5"
 try:
     ripte_json = requests.get(url_datosgob + id_ripte + "&start_date=2020-01-01").json() 
     ripte_ultimo = ripte_json["data"][-1]
+    if ripte_ultimo[-2] < ripte_ago_26:
+        ripte_ultimo[-2] = ripte_ago_26
 except:
     ripte_ultimo = ripte_ago_26
 indicadores.loc[3] = ["RIPTE", ripte_ultimo[-1], ripte_ultimo[-2]]
